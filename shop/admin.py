@@ -44,11 +44,14 @@ class ContactAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
+#class TrackerAdmin(admin.ModelAdmin):
+
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Orders, OrdersAdmin)
 admin.site.register(OrderUpdate, OrderUpdateAdmin)
+#admin.site.register(OrderUpdate, TrackerAdmin)
 
 admin.site.site_header = "The Cats Canteen"
 admin.site.index_title = "The Cats Canteen Administration"

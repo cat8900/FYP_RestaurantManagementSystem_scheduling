@@ -12,6 +12,7 @@ urlpatterns = [
     path('tracker/', views.tracker, name="TrackingStatus"),
     path('search/', views.search, name="Search"),
     path('checkout/', views.checkout, name="Checkout"),
+    path('creditpage/', views.creditcheckout, name="creditCard"),
     path('productView/<int:myid>', views.productView, name="productView"),
     path('orderView/', views.orderView, name="orderView"),
     path("handlerequest/", views.handlerequest, name="HandleRequest"),

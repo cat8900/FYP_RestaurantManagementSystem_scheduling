@@ -1,6 +1,6 @@
 {% extends 'shop/basic.html' %}
 
-{% block title%} Checkout - Food Mania{% endblock %}
+{% block title%} Checkout - Cat's Canteen{% endblock %}
 {% block css %}
     #cont {
         min-height : 609px;
@@ -68,6 +68,7 @@
             </div>
             <button type="submit" class="btn btn-primary" name="onlinePay" disabled>Online Pay</button>
             <button type="submit" class="btn btn-primary" name="cashOnDelivery">Cash On Delivery</button>
+            <button type="submit" class="btn btn-primary" name="creditCard" onclick="creditCardpage()">Credit Card</button>
         </form>
         </span>
     </div>
@@ -132,5 +133,9 @@ document.location="/shop";
 //    function preback() { window.history.forward(); }
 //    setTimeout("preback()", 0);
 //    window.onunload = function() { null };
+
+function creditCardpage() {
+    window.location.href = "shop/creditpage.html";
+  }
 </script>
 {% endblock %}

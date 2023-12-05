@@ -1,0 +1,79 @@
+<!--<form action="{% url 'checkout' %}" method="post">
+    {% csrf_token %}-->
+<!DOCTYPE html>
+    <html>
+      <head>
+        <title>Payment Form</title>
+        <script src="https://checkout.stripe.com/checkout.js"></script>
+      </head>
+      <body>
+        <form id="payment-form" method="POST">
+          <input type="text" name="card_number" placeholder="Card number">
+          <input type="text" name="exp_month" placeholder="MM">
+          <input type="text" name="exp_year" placeholder="YYYY">
+          <input type="text" name="cvc" placeholder="CVC">
+          <input type="text" name="amount" placeholder="Amount">
+          <input type="text" name="description" placeholder="Description">
+          <button id="submit-button">Pay Now</button>
+        </form>
+    
+        <script>
+          var stripe = Stripe('pk_live_51N3QzkDET2s8LRWb7uDtWV4Wz2DtwPZ9XRC8YocjGEaDMzWBgIDu56dAMQBD66DvZRgfcKQvBRM8rpq3jJdFxoGR00cwfVhmKJ');
+          var elements = stripe.elements();
+    
+          var cardNumber = elements.create('cardNumber');
+          cardNumber.mount('#payment-form [name="card_number"]');
+    
+          var cardExpiry = elements.create('cardExpiry');
+          cardExpiry.mount('#payment-form [name="exp_month"], #payment-form [name="exp_year"]');
+    
+          var cardCvc = elements.create('cardCvc');
+          cardCvc.mount('#payment-form [name="cvc"]');
+    
+          var form = document.getElementById('payment-form');
+          var submitButton = document.getElementById('submit-button');
+    
+          form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            submitButton.disabled = true;
+    
+            stripe.createToken(cardNumber).then(function(result) {
+              if (result.error) {
+                submitButton.disabled = false;
+                alert(result.error.message);
+              } else {
+                var token = result.token;
+                var amount = form.querySelector('input[name="amount"]').value;
+                var description = form.querySelector('input[name="description"]').value;
+    
+                // Send the token, amount, and description to your backend
+                fetch('/charge', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    token: token.id,
+                    amount: amount,
+                    description: description
+                  })
+                }).then(function(response) {
+                  return response.json();
+                }).then(function(data) {
+                  if (data.success) {
+                    // Payment succeeded, update your backend database accordingly
+                    alert('Payment succeeded!');
+                  } else {
+                    // Payment failed
+                    alert('Payment failed!');
+                  }
+                  submitButton.disabled = false;
+                });
+              }
+            });
+          });
+        </script>
+      </body>
+    </html>
+    
+  

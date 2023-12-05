@@ -1,7 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import HttpResponseRedirect
 
-# I have created this file - Darshan
 # from django.http import HttpResponse
 from .models import Product, Contact, Orders, OrderUpdate
 from django.contrib.auth.models import User
@@ -9,8 +8,11 @@ from django.contrib import messages
 from math import ceil
 from django.contrib.auth import authenticate, login, logout
 import json
+import stripe
 from django.views.decorators.csrf import csrf_exempt
 from PayTm import Checksum
+from PayTm import credit
+
 MERCHANT_KEY = 'kbzk1DSbJiV_O3p5';   # Your-Merchant-Key-Here
 
 
@@ -107,7 +109,7 @@ def search(request):
         darshan = {'msg': "No item available. Please make sure to enter relevant search query"}
     return render(request, 'shop/search.html', darshan)
 
-
+stripe.api_key = "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"
 def checkout(request):
     if request.method == "POST":
         items_json = request.POST.get('itemsJson', '')
@@ -142,10 +144,51 @@ def checkout(request):
             }
             darshan_dict['CHECKSUMHASH'] = Checksum.generate_checksum(darshan_dict, MERCHANT_KEY)
             return render(request, 'shop/paytm.html', {'darshan_dict': darshan_dict})
+        
+        if 'creditCard' in request.POST:
+            
+            stripe_token = request.POST.get("stripeToken")
+            amount = request.POST.get("amount")
+            description = request.POST.get("description")
+            success, message = process_payment(amount=amount, stripe_token=stripe_token)
+            #try:
+                #charge = stripe.Charge.create(
+                    #amount=amount,
+                    #currency="usd",
+                    #source=stripe_token,
+                    #description=description
+                #)
+            if success:
+                return HttpResponse("Payment successful")
+            else:
+                return HttpResponse(message)
+            #return render(request, 'shop/creditpage.html', {'darshan_dict': darshan_dict})                
+        
         elif 'cashOnDelivery' in request.POST:
             return render(request, 'shop/checkout.html', {'thank': thank, 'id': id})
     return render(request, 'shop/checkout.html')
 
+#def creditcheckout(request):
+    if request.method == "POST":        
+        if 'creditCard' in request.POST:
+            
+            stripe_token = request.POST.get("stripeToken")
+            amount = request.POST.get("amount")
+            description = request.POST.get("description")
+            try:
+                charge = stripe.Charge.create(
+                    #amount=amount,
+                    #currency="usd",
+                    #source=stripe_token,
+                    #description=description
+                )
+                 #Payment successful
+                return HttpResponse("Payment successful")
+            except stripe.error.CardError as e:
+                 #Card was declined
+                return HttpResponse("Card was declined")
+            #return render(request, 'shop/creditpage.html', {'darshan_dict': darshan_dict})
+    return render(request, 'shop/checkout.html')
 
 def productView(request, myid):
     product = Product.objects.filter(id=myid)
