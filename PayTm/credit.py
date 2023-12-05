@@ -2,7 +2,7 @@ import stripe
 from django.conf import settings
 
 def process_payment(amount, stripe_token):
-    stripe.api_key = settings.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
+    #stripe.api_key = 
 
     try:
         charge = stripe.Charge.create(
