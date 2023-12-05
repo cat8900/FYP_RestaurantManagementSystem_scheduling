@@ -109,7 +109,7 @@ def search(request):
         darshan = {'msg': "No item available. Please make sure to enter relevant search query"}
     return render(request, 'shop/search.html', darshan)
 
-stripe.api_key = "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"
+#stripe.api_key = ""
 def checkout(request):
     if request.method == "POST":
         items_json = request.POST.get('itemsJson', '')
